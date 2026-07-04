@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>अधिकार सेतु — Adhikar Setu</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+
+:root{
+  --ink:#1E2A44;
+  --ink-soft:#2E3B58;
+  --paper:#EFE7D4;
+  --paper-light:#FAF6EC;
+  --paper-dark:#E4D9C0;
+  --stamp-red:#A6362B;
+  --stamp-red-dark:#7E2620;
+  --marigold:#D9A441;
+  --marigold-dark:#B5842E;
+  --slate:#5C6472;
+  --forest:#3E6350;
+  --line:#C9BB9C;
+  --shadow: 0 6px 18px rgba(30,42,68,0.12);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Work Sans', sans-serif;
+  min-height:100vh;
+  position:relative;
+}
+
+/* paper grain overlay */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  opacity:0.05;
+  z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+
+.hi{font-family:'Noto Sans Devanagari', sans-serif;}
+
+h1,h2,h3,.display{
+  font-family:'Fraunces', serif;
+  color:var(--ink);
+  margin:0;
+  letter-spacing:-0.01em;
+}
+
+.mono{font-family:'Space Mono', monospace;}
+
+.app{
+  display:flex;
+  min-height:100vh;
+  max-width:1280px;
+  margin:0 auto;
+}
+
+/* ---------- NAV RAIL ---------- */
+.railnav{
+  width:220px;
+  flex-shrink:0;
+  background:var(--ink);
+  color:var(--paper-light);
+  display:flex;
+  flex-direction:column;
+  padding:28px 0 20px;
+  position:sticky;
+  top:0;
+  height:100vh;
+}
+.brand{
+  padding:0 22px 24px;
+  border-bottom:1px solid rgba(250,246,236,0.15);
+  margin-bottom:10px;
+}
+.brand .display{color:var(--paper-light); font-size:1.5rem; line-height:1.15;}
+.brand .hi{font-size:1.05rem; color:var(--marigold); display:block; margin-top:2px;}
+.brand small{display:block; margin-top:8px; color:rgba(250,246,236,0.55); font-size:0.72rem; letter-spacing:0.04em;}
+
+.navlist{list-style:none; margin:0; padding:8px 10px; flex:1;}
+.navitem{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px;
+  margin-bottom:4px;
+  border-radius:8px 2px 2px 8px;
+  cursor:pointer;
+  color:rgba(250,246,236,0.75);
+  font-size:0.93rem; font-weight:500;
+  position:relative;
+  transition:background 0.15s ease, color 0.15s ease;
+  border-left:3px solid transparent;
+}
+.navitem svg{width:18px; height:18px; flex-shrink:0; opacity:0.85;}
+.navitem:hover{background:rgba(250,246,236,0.06); color:var(--paper-light);}
+.navitem.active{
+  background:var(--paper);
+  color:var(--ink);
+  border-left:3px solid var(--stamp-red);
+  font-weight:600;
+}
+.navitem.active svg{opacity:1;}
+.navitem .num{font-family:'Space Mono',monospace; font-size:0.7rem; opacity:0.6; margin-left:auto;}
+
+.railfoot{padding:14px 22px 0; border-top:1px solid rgba(250,246,236,0.15); color:rgba(250,246,236,0.45); font-size:0.7rem; line-height:1.5;}
+
+/* ---------- MAIN ---------- */
+.page{
+  flex:1;
+  min-width:0;
+  background:var(--paper-light);
+  background-image:
+    linear-gradient(var(--paper-light), var(--paper-light)),
+    linear-gradient(180deg, rgba(166,54,43,0.06) 0px, rgba(166,54,43,0.06) 1px, transparent 1px);
+  background-size:100% 100%, 100% 34px;
+  padding:0 0 60px;
+  position:relative;
+}
+.page::before{
+  content:"";
+  position:absolute; top:0; bottom:0; left:74px;
+  width:1px; background:rgba(166,54,43,0.18);
+  pointer-events:none;
+}
+
+.view{display:none; padding:44px 56px 20px 90px; animation:fadein 0.35s ease;}
+.view.active{display:block;}
+@keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.eyebrow{
+  font-family:'Space Mono', monospace;
+  font-size:0.72rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--stamp-red);
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:8px;
+}
+.eyebrow::before{content:""; width:20px; height:1px; background:var(--stamp-red);}
+
+.view h1{font-size:2.3rem; margin-bottom:8px;}
+.view .sub{color:var(--slate); font-size:1.02rem; max-width:640px; line-height:1.55; margin-bottom:30px;}
+
+.card{
+  background:var(--paper-light);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:22px;
+  box-shadow:var(--shadow);
+}
+
+/* ---------- OVERVIEW ---------- */
+.grid5{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px; margin-top:10px;}
+.mini{
+  background:var(--paper-light); border:1px solid var(--line); border-radius:4px;
+  padding:18px; cursor:pointer; transition:transform 0.15s ease, box-shadow 0.15s ease;
+  border-top:3px solid var(--marigold);
+}
+.mini:hover{transform:translateY(-3px); box-shadow:var(--shadow);}
+.mini .num{font-family:'Space Mono',monospace; color:var(--stamp-red); font-size:0.75rem;}
+.mini h3{font-size:1.1rem; margin:6px 0 6px;}
+.mini p{color:var(--slate); font-size:0.86rem; margin:0; line-height:1.4;}
+
+/* ---------- FORM ELEMENTS ---------- */
+.qstep{margin-bottom:26px;}
+.qlabel{font-weight:600; margin-bottom:10px; display:block; font-size:0.95rem;}
+.chips{display:flex; flex-wrap:wrap; gap:10px;}
+.chip{
+  border:1.5px solid var(--line); background:var(--paper-light);
+  padding:10px 16px; border-radius:20px; cursor:pointer;
+  font-size:0.88rem; font-weight:500; color:var(--ink-soft);
+  transition:all 0.15s ease;
+}
+.chip:hover{border-color:var(--marigold);}
+.chip.sel{background:var(--ink); border-color:var(--ink); color:var(--paper-light);}
+.btn{
+  font-family:'Work Sans',sans-serif; font-weight:600; font-size:0.92rem;
+  background:var(--stamp-red); color:#fff; border:none; padding:13px 26px;
+  border-radius:3px; cursor:pointer; transition:background 0.15s ease;
+  letter-spacing:0.01em;
+}
+.btn:hover{background:var(--stamp-red-dark);}
+.btn.secondary{background:transparent; color:var(--ink); border:1.5px solid var(--ink);}
+.btn.secondary:hover{background:var(--ink); color:#fff;}
+.btn:disabled{opacity:0.4; cursor:not-allowed;}
+
+textarea, input[type=text]{
+  width:100%; padding:12px 14px; border:1.5px solid var(--line);
+  border-radius:4px; font-family:'Work Sans',sans-serif; font-size:0.92rem;
+  background:var(--paper-light); color:var(--ink); resize:vertical;
+}
+textarea:focus, input:focus{outline:2px solid var(--marigold); outline-offset:1px; border-color:var(--marigold);}
+label.small{font-size:0.8rem; color:var(--slate); display:block; margin-bottom:6px; font-weight:500;}
+
+/* ---------- SCHEME RESULT CARDS ---------- */
+.results-head{display:flex; align-items:baseline; justify-content:space-between; margin:36px 0 16px; flex-wrap:wrap; gap:10px;}
+.results-count{font-family:'Space Mono',monospace; font-size:0.85rem; color:var(--slate);}
+.scheme-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px;}
+.scheme-card{
+  position:relative; background:var(--paper-light); border:1px solid var(--line);
+  border-radius:4px; padding:20px 20px 18px; overflow:hidden;
+}
+.scheme-card .tagline{font-family:'Space Mono',monospace; font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--marigold-dark); margin-bottom:6px;}
+.scheme-card h3{font-size:1.15rem; margin-bottom:2px;}
+.scheme-card .hiname{color:var(--slate); font-size:0.85rem; margin-bottom:10px; display:block;}
+.scheme-card .benefit{font-weight:600; color:var(--forest); font-size:0.9rem; margin-bottom:10px;}
+.scheme-card .who{font-size:0.85rem; color:var(--slate); margin-bottom:12px; line-height:1.45;}
+.scheme-card details{font-size:0.85rem; color:var(--ink-soft);}
+.scheme-card summary{cursor:pointer; font-weight:600; color:var(--ink); margin-bottom:6px;}
+.scheme-card ul{margin:6px 0 0; padding-left:18px; line-height:1.5;}
+
+.stamp{
+  position:absolute; top:14px; right:-10px;
+  width:96px; height:96px;
+  display:flex; align-items:center; justify-content:center;
+  transform:rotate(-12deg);
+  opacity:0;
+}
+.stamp.show{animation:stampslam 0.5s cubic-bezier(.3,1.6,.4,1) forwards;}
+@keyframes stampslam{
+  0%{opacity:0; transform:rotate(-12deg) scale(2.4);}
+  60%{opacity:1; transform:rotate(-12deg) scale(0.9);}
+  100%{opacity:0.92; transform:rotate(-12deg) scale(1);}
+}
+.stamp svg{width:100%; height:100%;}
+
+/* ---------- CHECKLIST (KAGAZ) ---------- */
+.doclist{display:flex; flex-direction:column; gap:12px; margin-top:20px;}
+.docrow{
+  display:flex; gap:16px; align-items:flex-start; background:var(--paper-light);
+  border:1px solid var(--line); border-radius:4px; padding:16px 18px;
+}
+.docrow input[type=checkbox]{width:20px; height:20px; margin-top:2px; accent-color:var(--forest); flex-shrink:0;}
+.docrow .body{flex:1;}
+.docrow h3{font-size:1rem; margin-bottom:4px;}
+.docrow .why{font-size:0.85rem; color:var(--slate); margin-bottom:8px; line-height:1.4;}
+.docrow .where{font-size:0.8rem; color:var(--ink-soft); background:var(--paper-dark); display:inline-block; padding:4px 10px; border-radius:3px;}
+.docrow.done{border-color:var(--forest); background:rgba(62,99,80,0.05);}
+.docrow.done h3{text-decoration:line-through; color:var(--slate);}
+.progress-track{height:8px; background:var(--paper-dark); border-radius:4px; overflow:hidden; margin:16px 0 4px;}
+.progress-fill{height:100%; background:var(--forest); width:0%; transition:width 0.3s ease;}
+
+/* ---------- SAFETY (SURAKSHA) ---------- */
+.sos-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:30px;}
+.sos-card{
+  flex:1; min-width:150px; text-align:center; background:var(--ink); color:var(--paper-light);
+  border-radius:6px; padding:20px 14px; cursor:pointer; transition:transform 0.12s ease;
+}
+.sos-card:hover{transform:translateY(-2px);}
+.sos-card .bignum{font-family:'Space Mono',monospace; font-size:1.6rem; font-weight:700; color:var(--marigold);}
+.sos-card .label{font-size:0.78rem; margin-top:4px; opacity:0.85;}
+.tiplist{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px;}
+.tiplist li{background:var(--paper-light); border:1px solid var(--line); border-left:3px solid var(--marigold); padding:14px 16px; font-size:0.88rem; line-height:1.45; border-radius:2px;}
+.share-modal-note{background:rgba(217,164,65,0.12); border:1px dashed var(--marigold-dark); border-radius:4px; padding:14px 16px; font-size:0.85rem; color:var(--ink-soft); margin-top:14px; display:none;}
+
+/* ---------- NYAY / AWAAZ LOG TABLES ---------- */
+.logtable{width:100%; border-collapse:collapse; margin-top:20px; font-size:0.86rem;}
+.logtable th{text-align:left; font-family:'Space Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); border-bottom:2px solid var(--line); padding:8px 10px;}
+.logtable td{padding:12px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+.logtable tr:last-child td{border-bottom:none;}
+.pill{display:inline-block; padding:3px 10px; border-radius:12px; font-size:0.72rem; font-weight:600; background:var(--paper-dark); color:var(--ink-soft);}
+.pill.red{background:rgba(166,54,43,0.14); color:var(--stamp-red-dark);}
+.pill.green{background:rgba(62,99,80,0.14); color:var(--forest);}
+.caseid{font-family:'Space Mono',monospace; font-weight:700; color:var(--ink);}
+
+.issue-card{display:flex; align-items:center; gap:16px; background:var(--paper-light); border:1px solid var(--line); border-radius:4px; padding:14px 18px; margin-bottom:10px;}
+.issue-card .up{display:flex; flex-direction:column; align-items:center; cursor:pointer; user-select:none; color:var(--slate); flex-shrink:0;}
+.issue-card .up:hover{color:var(--stamp-red);}
+.issue-card .up .arrow{font-size:1.1rem; line-height:1;}
+.issue-card .up .count{font-family:'Space Mono',monospace; font-weight:700; font-size:0.9rem;}
+.issue-card .info{flex:1;}
+.issue-card h4{margin:0 0 2px; font-size:0.98rem;}
+.issue-card .meta{font-size:0.78rem; color:var(--slate);}
+
+.authority-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:16px;}
+.authority-grid .card{padding:16px;}
+.authority-grid h4{font-size:0.92rem; margin:0 0 6px;}
+.authority-grid p{font-size:0.82rem; color:var(--slate); margin:0; line-height:1.4;}
+
+.two-col{display:grid; grid-template-columns:1.1fr 0.9fr; gap:28px;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+/* ---------- MOBILE ---------- */
+@media(max-width:820px){
+  .app{flex-direction:column;}
+  .railnav{
+    width:100%; height:auto; position:sticky; top:0; z-index:100;
+    flex-direction:row; align-items:center; padding:10px 8px; overflow-x:auto;
+  }
+  .brand{display:none;}
+  .navlist{display:flex; flex:none; padding:0; gap:4px;}
+  .navitem{border-left:none; border-bottom:3px solid transparent; border-radius:6px; flex-direction:column; gap:4px; padding:8px 12px; font-size:0.68rem; white-space:nowrap;}
+  .navitem.active{border-left:none; border-bottom:3px solid var(--stamp-red);}
+  .navitem .num{display:none;}
+  .railfoot{display:none;}
+  .page::before{left:0; display:none;}
+  .view{padding:26px 20px;}
+  .view h1{font-size:1.7rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="railnav">
+    <div class="brand">
+      <div class="display">Adhikar Setu</div>
+      <span class="hi">अधिकार सेतु</span>
+      <small>AWAAZ · VOICE, SAFETY &amp; SOCIAL ACCESS</small>
+    </div>
+    <ul class="navlist">
+      <li class="navitem active" data-view="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12l8-8 8 8M6 10v10h12V10"/></svg> Overview <span class="num">00</span></li>
+      <li class="navitem" data-view="yojana"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M8 9h8M8 13h8M8 17h5"/></svg> Yojana Setu <span class="num">01</span></li>
+      <li class="navitem" data-view="suraksha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg> Suraksha <span class="num">02</span></li>
+      <li class="navitem" data-view="kagaz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg> Kagaz <span class="num">03</span></li>
+      <li class="navitem" data-view="nyay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 7h5l-2.5 6a3 3 0 006 0L15 7M14 7h5l-2.5 6a3 3 0 006 0L19 7"/></svg> Nyay <span class="num">04</span></li>
+      <li class="navitem" data-view="awaaz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11v2a2 2 0 002 2h2l4 4V5L7 9H5a2 2 0 00-2 2z"/><path d="M16 8a5 5 0 010 8"/></svg> Awaaz <span class="num">05</span></li>
+    </ul>
+    <div class="railfoot">Prototype for demonstration.<br>Verify all scheme &amp; helpline details on official government sources before relying on them.</div>
+  </aside>
+
+  <main class="page">
+
+    <!-- OVERVIEW -->
+    <section id="overview" class="view active">
+      <div class="eyebrow">Register 00 · Overview</div>
+      <h1>अधिकार सेतु — the bridge to what you're already owed.</h1>
+      <p class="sub">India has hundreds of schemes, helplines and protections built for people like you — daily wage workers, street vendors, farmers, home-based workers. Most go unclaimed simply because no one explained them plainly. This is a single, working register of five things you can use today.</p>
+      <div class="grid5">
+        <div class="mini" data-goto="yojana"><div class="num">01</div><h3>Yojana Setu</h3><p>Answer a few questions, find the government schemes you actually qualify for.</p></div>
+        <div class="mini" data-goto="suraksha"><div class="num">02</div><h3>Suraksha</h3><p>Emergency numbers, safe-transit notes and a quick way to log an incident.</p></div>
+        <div class="mini" data-goto="kagaz"><div class="num">03</div><h3>Kagaz</h3><p>The identity documents worth having, why, and where to get each one.</p></div>
+        <div class="mini" data-goto="nyay"><div class="num">04</div><h3>Nyay</h3><p>Report discrimination at work or in public, and know which authority handles it.</p></div>
+        <div class="mini" data-goto="awaaz"><div class="num">05</div><h3>Awaaz</h3><p>Raise a local civic issue and see what others in your area have flagged.</p></div>
+      </div>
+    </section>
+
+    <!-- YOJANA SETU -->
+    <section id="yojana" class="view">
+      <div class="eyebrow">Register 01 · Government Schemes &amp; Entitlements</div>
+      <h1>Yojana Setu</h1>
+      <p class="sub">Tell us a little about your work and household. We'll match you against real central government schemes — no login, no data sent anywhere.</p>
+
+      <div class="card" style="max-width:720px;">
+        <div class="qstep">
+          <span class="qlabel">1. What best describes your main work?</span>
+          <div class="chips" data-group="occupation">
+            <div class="chip" data-val="daily_wage">Daily wage / labour</div>
+            <div class="chip" data-val="farmer">Farming</div>
+            <div class="chip" data-val="vendor">Street vendor</div>
+            <div class="chip" data-val="domestic">Domestic / home-based work</div>
+            <div class="chip" data-val="business">Small business / shop owner</div>
+            <div class="chip" data-val="jobseeker">Looking for work / first job</div>
+          </div>
+        </div>
+
+        <div class="qstep">
+          <span class="qlabel">2. Gender</span>
+          <div class="chips" data-group="gender">
+            <div class="chip" data-val="woman">Woman</div>
+            <div class="chip" data-val="man">Man</div>
+            <div class="chip" data-val="other">Prefer another term</div>
+          </div>
+        </div>
+
+        <div class="qstep">
+          <span class="qlabel">3. Your age</span>
+          <div class="chips" data-group="age">
+            <div class="chip" data-val="22">Under 25</div>
+            <div class="chip" data-val="32">25–40</div>
+            <div class="chip" data-val="50">41–60</div>
+            <div class="chip" data-val="65">Above 60</div>
+          </div>
+        </div>
+
+        <div class="qstep">
+          <span class="qlabel">4. Monthly household income</span>
+          <div class="chips" data-group="income">
+            <div class="chip" data-val="low">Below ₹10,000</div>
+            <div class="chip" data-val="mid">₹10,000 – ₹25,000</div>
+            <div class="chip" data-val="high">Above ₹25,000</div>
+          </div>
+        </div>
+
+        <div class="qstep">
+          <span class="qlabel">5. A few quick yes/no</span>
+          <div class="chips">
+            <div class="chip toggle" data-flag="landOwner">I own farmland</div>
+            <div class="chip toggle" data-flag="hasBank">I have a bank account</div>
+            <div class="chip toggle" data-flag="hasGirlChild">I have a daughter under 10</div>
+          </div>
+        </div>
+
+        <button class="btn" id="matchBtn">Check what I'm eligible for</button>
+      </div>
+
+      <div id="yojanaResults"></div>
+    </section>
+
+    <!-- SURAKSHA -->
+    <section id="suraksha" class="view">
+      <div class="eyebrow">Register 02 · Women's Safety &amp; Mobility</div>
+      <h1>Suraksha</h1>
+      <p class="sub">Numbers worth saving, tips worth knowing, and a fast way to note down what happened while it's fresh.</p>
+
+      <div class="sos-row">
+        <div class="sos-card"><div class="bignum">112</div><div class="label">National Emergency Number</div></div>
+        <div class="sos-card"><div class="bignum">181</div><div class="label">Women Helpline</div></div>
+        <div class="sos-card"><div class="bignum">100</div><div class="label">Police</div></div>
+        <div class="sos-card"><div class="bignum">108</div><div class="label">Ambulance</div></div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <h3 style="margin-bottom:12px;">Safer transit — quick reminders</h3>
+          <ul class="tiplist">
+            <li>Share your route and expected arrival time with one trusted person before you travel, especially for night shifts.</li>
+            <li>Keep the vehicle number of any cab, auto or shared transport you take, and send it to someone before you get in.</li>
+            <li>If a workplace requires late hours, ask in writing for transport or a group departure — it is a reasonable request, not a favour.</li>
+            <li>Trust a bad feeling about a route, driver or space. Changing plans costs a few minutes; ignoring the feeling can cost more.</li>
+          </ul>
+
+          <h3 style="margin:26px 0 12px;">Share my live location</h3>
+          <button class="btn secondary" id="shareLocBtn">Share with a trusted contact</button>
+          <div class="share-modal-note" id="shareLocNote">In a full deployment, this sends your live location by SMS to up to three saved contacts every 10 minutes until you turn it off. This demo shows the interaction only.</div>
+        </div>
+
+        <div>
+          <h3 style="margin-bottom:12px;">Log an incident quickly</h3>
+          <div class="card">
+            <label class="small">What happened, where, and when — a few lines is enough</label>
+            <textarea id="incidentNote" rows="5" placeholder="e.g. Auto driver refused fare after 9pm near XYZ market, 3 July, asked for double the meter rate."></textarea>
+            <button class="btn" id="saveIncidentBtn" style="margin-top:12px;">Save note</button>
+            <div id="incidentSaved" style="display:none; margin-top:10px; font-size:0.85rem; color:var(--forest); font-weight:600;">Saved. You can turn this into a formal report anytime from Nyay.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KAGAZ -->
+    <section id="kagaz" class="view">
+      <div class="eyebrow">Register 03 · Documentation for the Undocumented</div>
+      <h1>Kagaz</h1>
+      <p class="sub">Most schemes and protections sit behind one or two documents. Tick what you already have — the rest shows you exactly where to go.</p>
+
+      <div class="progress-track"><div class="progress-fill" id="docProgress"></div></div>
+      <div id="docProgressLabel" class="mono" style="font-size:0.8rem; color:var(--slate); margin-bottom:10px;">0 of 6 documents in place</div>
+
+      <div class="doclist" id="doclist"></div>
+    </section>
+
+    <!-- NYAY -->
+    <section id="nyay" class="view">
+      <div class="eyebrow">Register 04 · Anti-Discrimination</div>
+      <h1>Nyay</h1>
+      <p class="sub">A short, dated record of what happened is often the first thing any authority asks for. Log it here and know who to take it to.</p>
+
+      <div class="two-col">
+        <div class="card">
+          <label class="small">Type of incident</label>
+          <div class="chips" data-group="nyayType" style="margin-bottom:16px;">
+            <div class="chip" data-val="Wages">Unequal wages</div>
+            <div class="chip" data-val="Caste">Caste-based</div>
+            <div class="chip" data-val="Gender">Gender-based</div>
+            <div class="chip" data-val="Religion">Religion-based</div>
+            <div class="chip" data-val="Disability">Disability access</div>
+          </div>
+          <label class="small">What happened</label>
+          <textarea id="nyayDesc" rows="4" placeholder="Describe briefly — date, place, what was said or done."></textarea>
+          <button class="btn" id="nyayFileBtn" style="margin-top:14px;">File this record</button>
+        </div>
+
+        <div>
+          <h3 style="margin-bottom:12px;">Who handles what</h3>
+          <div class="authority-grid">
+            <div class="card"><h4>Wage discrimination</h4><p>Office of the Labour Commissioner in your district, under the Equal Remuneration provisions.</p></div>
+            <div class="card"><h4>Caste-based</h4><p>National Commission for Scheduled Castes / Scheduled Tribes, or the nearest police station under the SC/ST Act.</p></div>
+            <div class="card"><h4>Gender-based</h4><p>National Commission for Women, or the local Internal Complaints Committee if it's a workplace.</p></div>
+            <div class="card"><h4>Disability access</h4><p>State Commissioner for Persons with Disabilities.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-head" style="margin-top:34px;"><h3>Your filed records</h3></div>
+      <table class="logtable" id="nyayTable">
+        <thead><tr><th>Case ID</th><th>Type</th><th>Details</th><th>Status</th></tr></thead>
+        <tbody id="nyayTbody"></tbody>
+      </table>
+    </section>
+
+    <!-- AWAAZ -->
+    <section id="awaaz" class="view">
+      <div class="eyebrow">Register 05 · Civic Participation</div>
+      <h1>Awaaz</h1>
+      <p class="sub">Local issues get fixed faster when more than one person flags them. Upvote what affects you too, or raise something new.</p>
+
+      <div class="card" style="max-width:640px; margin-bottom:28px;">
+        <label class="small">Issue title</label>
+        <input type="text" id="issueTitle" placeholder="e.g. No streetlight on the lane behind the market">
+        <label class="small" style="margin-top:12px;">Category</label>
+        <div class="chips" data-group="issueCat" style="margin-bottom:14px;">
+          <div class="chip" data-val="Water">Water</div>
+          <div class="chip" data-val="Sanitation">Sanitation</div>
+          <div class="chip" data-val="Electricity">Electricity</div>
+          <div class="chip" data-val="Roads">Roads</div>
+        </div>
+        <button class="btn" id="postIssueBtn">Post to the local board</button>
+      </div>
+
+      <h3 style="margin-bottom:12px;">Local board</h3>
+      <div id="issueList"></div>
+
+      <h3 style="margin:30px 0 12px;">Who to take it to</h3>
+      <div class="authority-grid">
+        <div class="card"><h4>Water &amp; sanitation</h4><p>Municipal Corporation / Gram Panchayat sanitation office.</p></div>
+        <div class="card"><h4>Electricity</h4><p>Local sub-division office of the state electricity board.</p></div>
+        <div class="card"><h4>Roads &amp; streetlights</h4><p>Public Works Department, via your ward councillor.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ---------------- NAVIGATION ---------------- */
+const navItems = document.querySelectorAll('.navitem');
+const views = document.querySelectorAll('.view');
+function goto(view){
+  navItems.forEach(n=>n.classList.toggle('active', n.dataset.view===view));
+  views.forEach(v=>v.classList.toggle('active', v.id===view));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+navItems.forEach(n=>n.addEventListener('click', ()=>goto(n.dataset.view)));
+document.querySelectorAll('.mini').forEach(m=>m.addEventListener('click', ()=>goto(m.dataset.goto)));
+
+/* ---------------- GENERIC CHIP GROUPS (single select) ---------------- */
+const answers = { occupation:null, gender:null, age:null, income:null, landOwner:false, hasBank:false, hasGirlChild:false };
+document.querySelectorAll('.chips[data-group]').forEach(group=>{
+  group.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      group.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+      chip.classList.add('sel');
+      const g = group.dataset.group;
+      if(g in answers) answers[g] = chip.dataset.val;
+    });
+  });
+});
+document.querySelectorAll('.chip.toggle').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    chip.classList.toggle('sel');
+    answers[chip.dataset.flag] = chip.classList.contains('sel');
+  });
+});
+
+/* ---------------- SCHEME DATA ---------------- */
+const SCHEMES = [
+  {id:'pmkisan', name:'PM-KISAN', hindi:'पीएम-किसान सम्मान निधि', benefit:'₹6,000/year paid directly to your bank account in three installments', who:'Small and marginal farmer families who own cultivable land', match:a=>a.occupation==='farmer'&&a.landOwner, apply:'Apply free of cost at your nearest Common Service Centre (CSC), or ask your local Patwari/revenue officer to register your land records.', docs:['Aadhaar card','Land ownership papers','Bank passbook']},
+  {id:'pmfby', name:'PM Fasal Bima Yojana', hindi:'फसल बीमा योजना', benefit:'Crop insurance covering losses from drought, flood, pests or hail', who:'Any farmer growing notified crops, owner or tenant', match:a=>a.occupation==='farmer', apply:'Enroll through your bank at the time of taking a crop loan, or at the nearest CSC before the sowing season cut-off.', docs:['Aadhaar card','Land records or tenancy proof','Bank account']},
+  {id:'kcc', name:'Kisan Credit Card', hindi:'किसान क्रेडिट कार्ड', benefit:'Low-interest credit for seeds, fertiliser and equipment, repayable after harvest', who:'Farmers, including tenant farmers and sharecroppers', match:a=>a.occupation==='farmer', apply:'Apply at any nationalised bank or regional rural bank branch near you.', docs:['Aadhaar card','Land or tenancy proof','Passport photo']},
+  {id:'svanidhi', name:'PM SVANidhi', hindi:'स्वनिधि योजना', benefit:'Working capital loan up to ₹10,000, growing to ₹20,000 and ₹50,000 on repayment', who:'Urban street vendors with a vending certificate or letter of recommendation', match:a=>a.occupation==='vendor', apply:'Apply online via the PM SVANidhi portal or at your municipal corporation office.', docs:['Aadhaar card','Vending certificate / town vending committee letter','Bank account']},
+  {id:'mudra', name:'PM Mudra Yojana', hindi:'मुद्रा योजना', benefit:'Collateral-free loans up to ₹10 lakh for small and micro businesses', who:'Non-corporate, non-farm small business owners and vendors', match:a=>a.occupation==='business'||a.occupation==='vendor', apply:'Apply at any bank, NBFC or microfinance institution under Shishu, Kishor or Tarun categories based on loan size.', docs:['Aadhaar card','Business proof / plan','Bank account']},
+  {id:'standup', name:'Stand-Up India', hindi:'स्टैंड-अप इंडिया', benefit:'Bank loans between ₹10 lakh and ₹1 crore for setting up a new enterprise', who:'Women entrepreneurs, and SC/ST entrepreneurs, setting up a greenfield business', match:a=>a.occupation==='business'&&a.gender==='woman', apply:'Apply through the Stand-Up India portal or directly at a scheduled commercial bank branch.', docs:['Aadhaar card','Business plan','Caste certificate if applicable']},
+  {id:'eshram', name:'e-Shram Registration', hindi:'ई-श्रम कार्ड', benefit:'A national ID card for unorganised workers plus accident insurance of ₹2 lakh', who:'Any unorganised sector worker — daily wage, domestic, street vendor, gig worker', match:a=>['daily_wage','domestic','vendor'].includes(a.occupation), apply:'Register free at eshram.gov.in or at your nearest Common Service Centre using your Aadhaar-linked mobile number.', docs:['Aadhaar card','Bank account','Mobile number']},
+  {id:'psym', name:'PM Shram Yogi Maandhan', hindi:'श्रम योगी मानधन', benefit:'Monthly pension of ₹3,000 after age 60, for a small monthly contribution now', who:'Unorganised workers aged 18–40 with income below ₹15,000/month', match:a=>['daily_wage','vendor','domestic'].includes(a.occupation)&&a.age>=18&&a.age<=40&&a.income==='low', apply:'Enroll at your nearest CSC with your Aadhaar and a savings bank or Jan Dhan account.', docs:['Aadhaar card','Savings bank / Jan Dhan account']},
+  {id:'apy', name:'Atal Pension Yojana', hindi:'अटल पेंशन योजना', benefit:'Guaranteed monthly pension of ₹1,000–₹5,000 after age 60', who:'Any worker aged 18–40 in the unorganised sector', match:a=>a.age>=18&&a.age<=40&&(a.income==='low'||a.income==='mid'), apply:'Ask your bank to enroll you — most nationalised banks offer this directly through net banking or a branch visit.', docs:['Aadhaar card','Bank account']},
+  {id:'pmjay', name:'Ayushman Bharat PM-JAY', hindi:'आयुष्मान भारत', benefit:'Free hospital treatment up to ₹5 lakh per family per year', who:'Families identified as economically vulnerable under the SECC database', match:a=>a.income==='low', apply:'Check your eligibility at the nearest Ayushman Bharat kiosk or CSC using your ration card or Aadhaar.', docs:['Aadhaar card','Ration card']},
+  {id:'psby', name:'PM Suraksha Bima Yojana', hindi:'सुरक्षा बीमा योजना', benefit:'Accidental death and disability cover of ₹2 lakh for about ₹20/year', who:'Anyone aged 18–70 with a bank account', match:a=>a.hasBank&&a.age>=18&&a.age<=70, apply:'Ask your bank to auto-debit the annual premium — most banks enable this on request or through net banking.', docs:['Bank account','Aadhaar card']},
+  {id:'pjjby', name:'PM Jeevan Jyoti Bima Yojana', hindi:'जीवन ज्योति बीमा योजना', benefit:'Life insurance cover of ₹2 lakh for about ₹436/year', who:'Anyone aged 18–50 with a bank account', match:a=>a.hasBank&&a.age>=18&&a.age<=50, apply:'Enroll through your bank branch or net banking during the renewal window each June.', docs:['Bank account','Aadhaar card']},
+  {id:'ssy', name:'Sukanya Samriddhi Yojana', hindi:'सुकन्या समृद्धि योजना', benefit:'A high-interest savings account for your daughter, maturing when she turns 21', who:'Parents or guardians of a girl child under 10', match:a=>a.hasGirlChild, apply:'Open the account at any post office or authorised bank branch with your daughter\'s birth certificate.', docs:["Daughter's birth certificate",'Aadhaar card of parent/guardian']},
+  {id:'msc', name:'Mahila Samman Savings Certificate', hindi:'महिला सम्मान बचत पत्र', benefit:'A fixed savings certificate for women with a preferential interest rate', who:'Any woman or girl, in her own name', match:a=>a.gender==='woman', apply:'Open at any post office or participating bank with a small minimum deposit.', docs:['Aadhaar card','Passport photo']},
+  {id:'nrlm', name:'National Rural Livelihood Mission (SHG support)', hindi:'राष्ट्रीय ग्रामीण आजीविका मिशन', benefit:'Low-interest loans and skill support through women\'s self-help groups', who:'Rural women, especially from low-income households', match:a=>a.gender==='woman'&&a.income==='low', apply:'Join or form a Self-Help Group through your local Gram Panchayat or block office.', docs:['Aadhaar card','Bank account']},
+  {id:'ujjwala', name:'Ujjwala Yojana', hindi:'उज्ज्वला योजना', benefit:'Free LPG gas connection with subsidised refills', who:'Women from below-poverty-line households currently using firewood or coal', match:a=>a.gender==='woman'&&a.income==='low', apply:'Apply at your nearest LPG distributor with your ration card and BPL proof.', docs:['Aadhaar card','Ration card / BPL proof']},
+  {id:'jsy', name:'Janani Suraksha Yojana', hindi:'जननी सुरक्षा योजना', benefit:'Cash assistance for institutional delivery and post-natal care', who:'Pregnant women from low-income households, aged 19 and above', match:a=>a.gender==='woman'&&a.income==='low'&&a.age>=18&&a.age<=45, apply:'Register at your nearest Anganwadi centre or government health facility during pregnancy.', docs:['Aadhaar card','Mother and Child Protection card']},
+  {id:'pmay', name:'PM Awas Yojana', hindi:'प्रधानमंत्री आवास योजना', benefit:'Financial assistance to build or improve a pucca house', who:'Households without a permanent house, from low-income groups', match:a=>a.income==='low', apply:'Apply through your Gram Panchayat (rural) or Urban Local Body (urban) office.', docs:['Aadhaar card','Income certificate','Land ownership proof if applicable']},
+  {id:'npst', name:'NPS-Traders (Pension for Traders)', hindi:'व्यापारी पेंशन योजना', benefit:'Monthly pension of ₹3,000 after age 60 for small traders and shopkeepers', who:'Self-employed shopkeepers and traders aged 18–40', match:a=>a.occupation==='business'&&a.age>=18&&a.age<=40, apply:'Enroll at your nearest Common Service Centre with your GST or shop registration if available.', docs:['Aadhaar card','Bank account']},
+  {id:'pmkvy', name:'PMKVY — Skill India', hindi:'प्रधानमंत्री कौशल विकास योजना', benefit:'Free short-term skill training with a certificate recognised by employers', who:'Anyone seeking their first job or a career switch', match:a=>a.occupation==='jobseeker', apply:'Find your nearest training centre through the Skill India portal or a district Skill Development office.', docs:['Aadhaar card','Educational certificates if any']},
+];
+
+function svgStamp(color, text){
+  return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="${color}" stroke-width="4"/><circle cx="60" cy="60" r="42" fill="none" stroke="${color}" stroke-width="1.5"/><text x="60" y="56" text-anchor="middle" font-family="Space Mono, monospace" font-size="13" font-weight="700" fill="${color}">${text}</text><text x="60" y="72" text-anchor="middle" font-family="Space Mono, monospace" font-size="8" fill="${color}">ELIGIBLE</text></svg>`;
+}
+
+document.getElementById('matchBtn').addEventListener('click', ()=>{
+  if(!answers.occupation || !answers.gender || !answers.age || !answers.income){
+    alert('Please answer the first four questions so we can match you accurately.');
+    return;
+  }
+  const a = {...answers, age:parseInt(answers.age,10)};
+  const matches = SCHEMES.filter(s=>s.match(a));
+  const box = document.getElementById('yojanaResults');
+  if(matches.length===0){
+    box.innerHTML = `<div class="results-head"><h3>No exact matches found</h3></div><p class="sub">Try adjusting your answers — eligibility rules are often broader than they first appear, and it's worth asking at your nearest Common Service Centre directly.</p>`;
+    return;
+  }
+  box.innerHTML = `<div class="results-head"><h3>You may be eligible for ${matches.length} scheme${matches.length>1?'s':''}</h3><span class="results-count">MATCHED · ${new Date().toLocaleDateString('en-IN')}</span></div>
+  <div class="scheme-grid">
+    ${matches.map(s=>`
+      <div class="scheme-card">
+        <div class="stamp"><div class="stampsvg">${svgStamp('#A6362B','पात्र')}</div></div>
+        <div class="tagline">Central Government Scheme</div>
+        <h3>${s.name}</h3>
+        <span class="hiname hi">${s.hindi}</span>
+        <div class="benefit">${s.benefit}</div>
+        <div class="who">${s.who}</div>
+        <details>
+          <summary>How to apply</summary>
+          <p style="margin:6px 0;">${s.apply}</p>
+          <strong style="font-size:0.8rem;">Documents needed:</strong>
+          <ul>${s.docs.map(d=>`<li>${d}</li>`).join('')}</ul>
+        </details>
+      </div>
+    `).join('')}
+  </div>`;
+  setTimeout(()=>{
+    document.querySelectorAll('.stamp').forEach((st,i)=>{
+      setTimeout(()=>st.classList.add('show'), i*90);
+    });
+  }, 50);
+});
+
+/* ---------------- KAGAZ (DOCUMENTS) ---------------- */
+const DOCS = [
+  {name:'Aadhaar Card', why:'The base identity document nearly every scheme, bank account and SIM card requires.', where:'Nearest Aadhaar Seva Kendra or post office, with proof of address.'},
+  {name:'e-Shram Card', why:'Registers you as an unorganised worker and unlocks accident insurance and pension schemes.', where:'eshram.gov.in or any Common Service Centre, free of cost.'},
+  {name:'Voter ID', why:'A widely accepted photo ID and your gateway to civic participation.', where:'Apply online at the National Voter Service Portal or through your local Electoral Registration Officer.'},
+  {name:'Ration Card', why:'Confirms your income category and unlocks subsidised food, PMJAY and PM Awas Yojana.', where:'Your state\'s Food & Civil Supplies department office, or online portal where available.'},
+  {name:'Labour / Construction Worker Card', why:'Registers you under the state Building & Other Construction Workers welfare board for medical and education benefits.', where:'District Labour Office or your state\'s labour welfare board portal.'},
+  {name:'Bank / Jan Dhan Account', why:'Every direct benefit transfer scheme pays into a bank account — this is the single most useful document to get first.', where:'Any nationalised bank branch, zero-balance account under PM Jan Dhan Yojana.'},
+];
+const doclistEl = document.getElementById('doclist');
+DOCS.forEach((d,i)=>{
+  const row = document.createElement('div');
+  row.className='docrow';
+  row.innerHTML = `<input type="checkbox" id="doc${i}"><div class="body"><h3>${d.name}</h3><div class="why">${d.why}</div><span class="where">${d.where}</span></div>`;
+  doclistEl.appendChild(row);
+  row.querySelector('input').addEventListener('change', e=>{
+    row.classList.toggle('done', e.target.checked);
+    updateDocProgress();
+  });
+});
+function updateDocProgress(){
+  const total = DOCS.length;
+  const done = document.querySelectorAll('#doclist input:checked').length;
+  document.getElementById('docProgress').style.width = (done/total*100)+'%';
+  document.getElementById('docProgressLabel').textContent = `${done} of ${total} documents in place`;
+}
+
+/* ---------------- SURAKSHA ---------------- */
+document.getElementById('shareLocBtn').addEventListener('click', ()=>{
+  const note = document.getElementById('shareLocNote');
+  note.style.display = note.style.display==='block' ? 'none' : 'block';
+});
+document.getElementById('saveIncidentBtn').addEventListener('click', ()=>{
+  const val = document.getElementById('incidentNote').value.trim();
+  const done = document.getElementById('incidentSaved');
+  if(!val){ return; }
+  done.style.display='block';
+  setTimeout(()=>done.style.display='none', 4000);
+});
+
+/* ---------------- NYAY ---------------- */
+let nyayCounter = 1;
+const nyayTbody = document.getElementById('nyayTbody');
+document.getElementById('nyayFileBtn').addEventListener('click', ()=>{
+  const typeChip = document.querySelector('.chips[data-group="nyayType"] .chip.sel');
+  const desc = document.getElementById('nyayDesc').value.trim();
+  if(!typeChip || !desc){ alert('Please select a type and add a short description.'); return; }
+  const id = 'NY-2026-' + String(nyayCounter++).padStart(4,'0');
+  const row = document.createElement('tr');
+  row.innerHTML = `<td class="caseid">${id}</td><td><span class="pill red">${typeChip.dataset.val}</span></td><td>${desc}</td><td><span class="pill green">Recorded</span></td>`;
+  nyayTbody.prepend(row);
+  document.getElementById('nyayDesc').value='';
+  typeChip.classList.remove('sel');
+});
+
+/* ---------------- AWAAZ (CIVIC) ---------------- */
+let issueCounter = 4;
+const seedIssues = [
+  {title:'Broken storm drain flooding the lane after rain', cat:'Water', votes:14},
+  {title:'No streetlight near the bus stop for three weeks', cat:'Electricity', votes:9},
+  {title:'Garbage not collected from the market row', cat:'Sanitation', votes:21},
+];
+const issueListEl = document.getElementById('issueList');
+function renderIssue(issue){
+  const card = document.createElement('div');
+  card.className='issue-card';
+  card.innerHTML = `<div class="up"><span class="arrow">▲</span><span class="count">${issue.votes}</span></div>
+    <div class="info"><h4>${issue.title}</h4><div class="meta">${issue.cat} · posted by a community member</div></div>`;
+  card.querySelector('.up').addEventListener('click', ()=>{
+    issue.votes++;
+    card.querySelector('.count').textContent = issue.votes;
+  });
+  issueListEl.appendChild(card);
+}
+seedIssues.forEach(renderIssue);
+document.getElementById('postIssueBtn').addEventListener('click', ()=>{
+  const title = document.getElementById('issueTitle').value.trim();
+  const catChip = document.querySelector('.chips[data-group="issueCat"] .chip.sel');
+  if(!title || !catChip){ alert('Add a title and pick a category.'); return; }
+  const issue = {title, cat:catChip.dataset.val, votes:1};
+  renderIssue(issue);
+  document.getElementById('issueTitle').value='';
+  catChip.classList.remove('sel');
+});
+</script>
+</body>
+</html>
